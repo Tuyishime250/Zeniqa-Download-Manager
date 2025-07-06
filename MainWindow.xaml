@@ -1,0 +1,285 @@
+﻿<Window x:Class="ZeniqaDownloadManager.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Zeniqa Download Manager" Height="800" Width="1200"
+        Background="{StaticResource BackgroundBrush}"
+        FontFamily="{StaticResource ModernFont}"
+        WindowStartupLocation="CenterScreen"
+        Icon="blue-z-icon.ico">
+    
+    <Window.Resources>
+        <!-- Status-specific styles -->
+        <Style x:Key="StatusTextStyle" TargetType="TextBlock">
+            <Setter Property="FontWeight" Value="Medium"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="Background" Value="{StaticResource BorderBrush}"/>
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}"/>
+        </Style>
+        
+        <Style x:Key="StatusPendingStyle" TargetType="TextBlock" BasedOn="{StaticResource StatusTextStyle}">
+            <Setter Property="Background" Value="{StaticResource StatusPendingBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style x:Key="StatusInProgressStyle" TargetType="TextBlock" BasedOn="{StaticResource StatusTextStyle}">
+            <Setter Property="Background" Value="{StaticResource StatusInProgressBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style x:Key="StatusCompletedStyle" TargetType="TextBlock" BasedOn="{StaticResource StatusTextStyle}">
+            <Setter Property="Background" Value="{StaticResource StatusCompletedBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style x:Key="StatusFailedStyle" TargetType="TextBlock" BasedOn="{StaticResource StatusTextStyle}">
+            <Setter Property="Background" Value="{StaticResource StatusFailedBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+        
+        <Style x:Key="StatusPausedStyle" TargetType="TextBlock" BasedOn="{StaticResource StatusTextStyle}">
+            <Setter Property="Background" Value="{StaticResource StatusPausedBrush}"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+    </Window.Resources>
+    
+    <ScrollViewer VerticalScrollBarVisibility="Auto">
+        <Grid Margin="20">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <!-- Header -->
+            <Border Grid.Row="0" Background="{StaticResource PrimaryBrush}" CornerRadius="8" Margin="0,0,0,20">
+                <StackPanel Orientation="Horizontal" Margin="20,16">
+                    <TextBlock Text="Zeniqa Download Manager" 
+                               Style="{StaticResource HeaderTextStyle}" 
+                               Foreground="White" 
+                               FontSize="24" 
+                               FontWeight="Bold"/>
+                    <TextBlock Text="v1.0" 
+                               Style="{StaticResource CaptionTextStyle}" 
+                               Foreground="White" 
+                               VerticalAlignment="Bottom" 
+                               Margin="10,0,0,2"/>
+                    <TextBlock Text="Engineer: Tuyishime Cedrick" 
+                               Style="{StaticResource CaptionTextStyle}" 
+                               Foreground="White" 
+                               VerticalAlignment="Bottom" 
+                               Margin="30,0,0,2"/>
+                </StackPanel>
+            </Border>
+
+            <!-- URL Input Section -->
+            <GroupBox Header="🔗 URL Analysis" Grid.Row="1" Style="{StaticResource ModernGroupBoxStyle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox x:Name="UrlTextBox" Grid.Column="0" 
+                             Style="{StaticResource ModernTextBoxStyle}"
+                             Text="https://example.com/video.mp4" 
+                             VerticalAlignment="Center"
+                             Margin="0,0,12,0"
+                             FontSize="16"/>
+                    <Button x:Name="AnalyzeButton" Grid.Column="1" 
+                            Content="🔍 Analyze URL" 
+                            Style="{StaticResource ModernButtonStyle}"
+                            Click="AnalyzeButton_Click" 
+                            Padding="20,12"
+                            FontSize="14"/>
+                </Grid>
+            </GroupBox>
+
+            <!-- Analysis Results -->
+            <GroupBox Header="📊 Analysis Results" Grid.Row="2" Style="{StaticResource ModernGroupBoxStyle}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="250">
+                    <Grid x:Name="ResultsGrid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Type:" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" Margin="0,0,20,8"/>
+                        <TextBlock x:Name="TypeTextBlock" Grid.Row="0" Grid.Column="1" Text="-" Style="{StaticResource BodyTextStyle}" Margin="0,0,0,8"/>
+                        
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Title:" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" Margin="0,0,20,8"/>
+                        <TextBlock x:Name="TitleTextBlock" Grid.Row="1" Grid.Column="1" Text="-" Style="{StaticResource BodyTextStyle}" Margin="0,0,0,8"/>
+                        
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="File Extension:" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" Margin="0,0,20,8"/>
+                        <TextBlock x:Name="ExtensionTextBlock" Grid.Row="2" Grid.Column="1" Text="-" Style="{StaticResource BodyTextStyle}" Margin="0,0,0,8"/>
+                        
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="File Size:" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" Margin="0,0,20,8"/>
+                        <TextBlock x:Name="SizeTextBlock" Grid.Row="3" Grid.Column="1" Text="-" Style="{StaticResource BodyTextStyle}" Margin="0,0,0,8"/>
+                        
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Duration:" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" Margin="0,0,20,8"/>
+                        <TextBlock x:Name="DurationTextBlock" Grid.Row="4" Grid.Column="1" Text="-" Style="{StaticResource BodyTextStyle}" Margin="0,0,0,8"/>
+                        
+                        <TextBlock Grid.Row="5" Grid.Column="0" Text="Status:" Style="{StaticResource BodyTextStyle}" FontWeight="SemiBold" Margin="0,0,20,8"/>
+                        <TextBlock x:Name="StatusTextBlock" Grid.Row="5" Grid.Column="1" Text="-" Style="{StaticResource BodyTextStyle}" Margin="0,0,0,8"/>
+
+                        <!-- DetailsTextBlock for displaying details and status messages -->
+                        <TextBlock x:Name="DetailsTextBlock"
+                                   Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="2"
+                                   Style="{StaticResource CaptionTextStyle}"
+                                   Text="Enter a URL and click Analyze to see details."
+                                   TextWrapping="Wrap"
+                                   Margin="0,12,0,0"/>
+                    </Grid>
+                </ScrollViewer>
+            </GroupBox>
+
+            <!-- Download Queue DataGrid -->
+            <GroupBox Header="📥 Download Queue" Grid.Row="3" Style="{StaticResource ModernGroupBoxStyle}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="300">
+                    <DataGrid x:Name="JobsDataGrid" 
+                              ItemsSource="{Binding AllJobs}" 
+                              Style="{StaticResource ModernDataGridStyle}"
+                              RowHeight="50" 
+                              HeadersVisibility="Column" 
+                              SelectionMode="Single"
+                              Margin="0,0,0,16">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Title" Binding="{Binding Title}" Width="3*" FontWeight="Medium"/>
+                            <DataGridTemplateColumn Header="Status" Width="120">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Border Background="{Binding Status, Converter={StaticResource StatusToBrushConverter}}"
+                                                CornerRadius="4" 
+                                                Padding="8,4"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center">
+                                            <TextBlock Text="{Binding Status}" 
+                                                       FontWeight="Medium"
+                                                       Foreground="White"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="Progress" Width="200">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Vertical" Margin="8,0">
+                                            <ProgressBar Value="{Binding Progress}" 
+                                                         Maximum="100"
+                                                         Style="{StaticResource ModernProgressBarStyle}"
+                                                         Margin="0,0,0,4"/>
+                                            <TextBlock Text="{Binding Progress, StringFormat={}{0:F1}%}" 
+                                                       Style="{StaticResource CaptionTextStyle}"
+                                                       HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="Type" Binding="{Binding Type}" Width="100"/>
+                            <DataGridTextColumn Header="Size" Binding="{Binding TotalSize, Converter={StaticResource FileSizeConverter}}" Width="120"/>
+                            <DataGridTemplateColumn Header="Actions" Width="200">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                            <Button Content="⏸️ Pause" 
+                                                    Style="{StaticResource WarningButtonStyle}"
+                                                    Margin="4,0" 
+                                                    Padding="12,6" 
+                                                    FontSize="12"
+                                                    CommandParameter="{Binding}" 
+                                                    Click="PauseJob_Click" 
+                                                    Visibility="{Binding IsInProgress, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                            <Button Content="▶️ Download" 
+                                                    Style="{StaticResource SuccessButtonStyle}"
+                                                    Margin="4,0" 
+                                                    Padding="12,6" 
+                                                    FontSize="12"
+                                                    CommandParameter="{Binding}" 
+                                                    Click="StartDownload_Click" 
+                                                    Visibility="{Binding IsPending, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                            <Button Content="▶️ Resume" 
+                                                    Style="{StaticResource ModernButtonStyle}"
+                                                    Margin="4,0" 
+                                                    Padding="12,6" 
+                                                    FontSize="12"
+                                                    CommandParameter="{Binding}" 
+                                                    Click="ResumeJob_Click" 
+                                                    Visibility="{Binding IsPaused, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </ScrollViewer>
+            </GroupBox>
+
+            <!-- Action Buttons -->
+            <Border Grid.Row="4" Background="{StaticResource SurfaceBrush}" CornerRadius="8" Padding="20,16" Margin="0,0,0,16">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button x:Name="PauseAllButton" 
+                            Content="⏸️ Pause All" 
+                            Style="{StaticResource WarningButtonStyle}"
+                            Click="PauseAllButton_Click" 
+                            Padding="16,10" 
+                            Margin="0,0,8,0"/>
+                    <Button x:Name="ResumeAllButton" 
+                            Content="▶️ Resume All" 
+                            Style="{StaticResource ModernButtonStyle}"
+                            Click="ResumeAllButton_Click" 
+                            Padding="16,10" 
+                            Margin="0,0,8,0"/>
+                    <Button x:Name="SettingsButton" 
+                            Content="⚙️ Settings" 
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="SettingsButton_Click" 
+                            Padding="16,10" 
+                            Margin="0,0,8,0"/>
+                    <Button x:Name="DownloadButton" 
+                            Content="📥 Add to Queue" 
+                            Style="{StaticResource SuccessButtonStyle}"
+                            Click="DownloadButton_Click" 
+                            Padding="16,10" 
+                            Margin="0,0,8,0" 
+                            IsEnabled="False"/>
+                    <Button x:Name="ClearButton" 
+                            Content="🗑️ Clear" 
+                            Style="{StaticResource SecondaryButtonStyle}"
+                            Click="ClearButton_Click" 
+                            Padding="16,10"/>
+                </StackPanel>
+            </Border>
+
+            <!-- About Us & Contact Us Section -->
+            <Border Grid.Row="5" Background="{StaticResource SurfaceBrush}" CornerRadius="8" Padding="20,16" Margin="0,0,0,0">
+                <StackPanel>
+                    <TextBlock Text="About Us" Style="{StaticResource HeaderTextStyle}" Margin="0,0,0,8"/>
+                    <TextBlock Text="Zeniqa Download Manager is a modern, user-friendly tool for managing and downloading your favorite videos and files efficiently." Style="{StaticResource BodyTextStyle}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+                    <TextBlock Text="Engineer: Tuyishime Cedrick" Style="{StaticResource CaptionTextStyle}" Margin="0,0,0,8"/>
+                    <TextBlock Text="Contact Us" Style="{StaticResource HeaderTextStyle}" Margin="0,12,0,8"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                        <TextBlock Text="Email: " Style="{StaticResource BodyTextStyle}"/>
+                        <TextBlock Text="zeniqa@gmail.com" Style="{StaticResource BodyTextStyle}" FontWeight="Bold"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal">
+                        <TextBlock Text="Mobile: " Style="{StaticResource BodyTextStyle}"/>
+                        <TextBlock Text="+250791597890" Style="{StaticResource BodyTextStyle}" FontWeight="Bold"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </ScrollViewer>
+</Window>

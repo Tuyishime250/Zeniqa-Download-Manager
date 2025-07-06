@@ -1,0 +1,51 @@
+<Window x:Class="ZeniqaDownloadManager.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Download Settings" Height="300" Width="400" 
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize">
+    <Grid Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Grid.Row="0" Margin="0,0,0,20">
+            <TextBlock Text="Download Configuration" FontSize="16" FontWeight="Bold" Margin="0,0,0,20"/>
+
+            <!-- Max Concurrent Chunks -->
+            <TextBlock Text="Max Concurrent Chunks:" FontWeight="Bold" Margin="0,0,0,5"/>
+            <TextBlock Text="Number of parallel downloads for chunked files (4-16 recommended)" 
+                       FontSize="11" Foreground="Gray" Margin="0,0,0,5"/>
+            <Slider x:Name="MaxChunksSlider" Minimum="1" Maximum="16" Value="8" 
+                    TickFrequency="1" IsSnapToTickEnabled="True" Margin="0,0,0,10"/>
+            <TextBlock x:Name="MaxChunksValue" Text="8" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+
+            <!-- Buffer Size -->
+            <TextBlock Text="Buffer Size (bytes):" FontWeight="Bold" Margin="0,0,0,5"/>
+            <TextBlock Text="Size of data chunks read at once (4096-32768 recommended)" 
+                       FontSize="11" Foreground="Gray" Margin="0,0,0,5"/>
+            <ComboBox x:Name="BufferSizeComboBox" Margin="0,0,0,15">
+                <ComboBoxItem Content="4096 bytes" Tag="4096"/>
+                <ComboBoxItem Content="8192 bytes" Tag="8192" IsSelected="True"/>
+                <ComboBoxItem Content="16384 bytes" Tag="16384"/>
+                <ComboBoxItem Content="32768 bytes" Tag="32768"/>
+            </ComboBox>
+
+            <!-- Timeout -->
+            <TextBlock Text="Timeout (seconds):" FontWeight="Bold" Margin="0,0,0,5"/>
+            <TextBlock Text="Maximum time to wait for server response" 
+                       FontSize="11" Foreground="Gray" Margin="0,0,0,5"/>
+            <Slider x:Name="TimeoutSlider" Minimum="30" Maximum="600" Value="180" 
+                    TickFrequency="30" IsSnapToTickEnabled="True" Margin="0,0,0,10"/>
+            <TextBlock x:Name="TimeoutValue" Text="180 seconds" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+        </StackPanel>
+
+        <!-- Buttons -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button x:Name="SaveButton" Content="Save" Click="SaveButton_Click" 
+                    Padding="20,8" Margin="0,0,10,0"/>
+            <Button x:Name="CancelButton" Content="Cancel" Click="CancelButton_Click" 
+                    Padding="20,8"/>
+        </StackPanel>
+    </Grid>
+</Window> 
